@@ -94,9 +94,9 @@ uint8_t sdl_helper::scale() const
 
 void sdl_helper::clear() const
 {
-    SDL_SetRenderDrawColor(m_renderer, m_bright.r, m_bright.g, m_bright.b, m_bright.a);
-    SDL_RenderClear(m_renderer);
     SDL_SetRenderDrawColor(m_renderer, m_dark.r, m_dark.g, m_dark.b, m_dark.a);
+//    SDL_SetRenderDrawColor(m_renderer, m_bright.r, m_bright.g, m_bright.b, m_bright.a);
+    SDL_RenderClear(m_renderer);
 }
 
 void sdl_helper::repaint() const

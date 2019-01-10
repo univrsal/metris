@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL.h>
+#include "sprite.hpp"
 
-enum sprite_id;
 class game_logic;
 
 enum rotation

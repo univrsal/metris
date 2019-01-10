@@ -1,6 +1,5 @@
 #include "util.hpp"
 #include "brick.hpp"
-#include "sprite.hpp"
 #include "sdl_helper.hpp"
 #include "game_logic.hpp"
 #include <cstdlib>
@@ -32,7 +31,7 @@ void brick::draw(sdl_helper* helper, game_logic* logic) const
             r.x = p.x + (x + m_grid_x) * CONST_BRICK_DIM * helper->scale();
             r.y = p.y + (y + m_grid_y) * CONST_BRICK_DIM * helper->scale();
 
-            SDL_RenderDrawRect(helper->renderer(), &r);
+            /*SDL_RenderDrawRect(helper->renderer(), &r); */
 
             if (current != ID_EMPTY && y + m_grid_y >= 0)
             {

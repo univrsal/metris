@@ -12,8 +12,14 @@ class sdl_helper;
 class atlas;
 class level;
 
-enum game_state;
-enum direction;
+enum game_state
+{
+    STATE_IN_MENU,
+    STATE_INGAME,
+    STATE_GAMEOVER,
+    STATE_DRAW_GAMEOVER,
+    STATE_LINE_BREAK
+};
 
 class game_logic
 {

@@ -8,15 +8,6 @@
 #include "segment_display.hpp"
 #include <cstdio>
 
-enum game_state
-{
-    STATE_IN_MENU,
-    STATE_INGAME,
-    STATE_GAMEOVER,
-    STATE_DRAW_GAMEOVER,
-    STATE_LINE_BREAK
-};
-
 game_logic::game_logic(sdl_helper* helper)
     : m_game_field{}, m_lock_fast_drop(false)
 {
@@ -493,12 +484,15 @@ void game_logic::draw()
     m_helper->clear();
     if (in_game())
     {
+        auto* c = m_helper->color_bright();
+        SDL_SetRenderDrawColor(m_helper->renderer(), c->r, c->g, c->b, c->a);
+        SDL_RenderFillRect(m_helper->renderer(), m_helper->field_dim());
         draw_walls();
         draw_sidebar();
-        SDL_SetRenderDrawColor(m_helper->renderer(), 255, 0, 0, 255);
+        /*SDL_SetRenderDrawColor(m_helper->renderer(), 255, 0, 0, 255);
         SDL_RenderDrawRect(m_helper->renderer(), m_helper->game_dim());
         SDL_SetRenderDrawColor(m_helper->renderer(), 0, 255, 0, 255);
-        SDL_RenderDrawRect(m_helper->renderer(), m_helper->field_dim());
+        SDL_RenderDrawRect(m_helper->renderer(), m_helper->field_dim());*/
             
         const auto origin = m_helper->field_origin();
 

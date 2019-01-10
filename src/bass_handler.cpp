@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <string>
 #include "bass_handler.hpp"
 #include "util.hpp"
 
@@ -9,7 +10,30 @@ bass_handler::bass_handler()
 
 bool bass_handler::init()
 {
-    bool success = BASS_Init(1, 41000, BASS_DEVICE_STEREO, nullptr, nullptr);
+#ifndef _WIN32
+    int a = 1;
+    bool success = false;
+    BASS_DEVICEINFO info; 
+
+    while (BASS_GetDeviceInfo(a, &info)) /* find first device, that can be initialized */
+    {
+       if (info.flags & BASS_DEVICE_ENABLED)
+       {
+           printf("Found audio device %i::%s\n", a, info.name);
+           if (strstr(info.name, "Pulse") != nullptr)
+           {
+               printf("Initializing %i::\"%s\"...\n", a, info.name);
+               success = BASS_Init(a, 44100, 0, nullptr, nullptr);
+               break;
+           }
+       }
+       a++;
+    }
+#else
+    printf("Initializing default device\n");
+    success = BASS_Init(1, 44100, BASS_DEVICE_STEREO, nullptr, nullptr);
+#endif
+    printf("Device state: %s\n", success ? "Yes" : "No");
 
     if (success)
     {
