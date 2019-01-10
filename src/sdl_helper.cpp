@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include "util.hpp"
 
-bool sdl_helper::init(const char * title, int w, int h)
+bool sdl_helper::init(const char* title, int w, int h)
 {
     auto success = true;
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
@@ -95,7 +95,6 @@ uint8_t sdl_helper::scale() const
 void sdl_helper::clear() const
 {
     SDL_SetRenderDrawColor(m_renderer, m_dark.r, m_dark.g, m_dark.b, m_dark.a);
-//    SDL_SetRenderDrawColor(m_renderer, m_bright.r, m_bright.g, m_bright.b, m_bright.a);
     SDL_RenderClear(m_renderer);
 }
 
@@ -106,7 +105,7 @@ void sdl_helper::repaint() const
 
 SDL_Rect sdl_helper::scale_rect(const SDL_Rect* r) const
 {
-    return { r->x * m_scale, r->y * m_scale, r->w * m_scale, r->h * m_scale };
+    return {r->x * m_scale, r->y * m_scale, r->w * m_scale, r->h * m_scale};
 }
 
 const SDL_Color* sdl_helper::color_bright() const
@@ -141,7 +140,7 @@ const SDL_Point* sdl_helper::origin() const
 
 SDL_Point sdl_helper::field_origin() const
 {
-    return SDL_Point{ m_field_dim.x, m_field_dim.y };
+    return SDL_Point{m_field_dim.x, m_field_dim.y};
 }
 
 const SDL_Rect* sdl_helper::game_dim() const
@@ -177,5 +176,5 @@ void sdl_helper::set_display(const int w, const int h)
     m_field_dim.w = CONST_FIELD_WIDTH * CONST_BRICK_DIM * m_scale;
     m_field_dim.h = new_h;
 
-    m_game_dim = { m_origin.x, m_field_dim.y, new2_w, new_h };
+    m_game_dim = {m_origin.x, m_field_dim.y, new2_w, new_h};
 }

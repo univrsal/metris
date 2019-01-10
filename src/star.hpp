@@ -3,6 +3,7 @@
 
 class sdl_helper;
 
+/* Blinking stars in title screen */
 class star
 {
 public:

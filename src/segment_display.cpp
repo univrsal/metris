@@ -44,7 +44,7 @@ void segment_display::draw()
     {
         if (segment->get_digit() > 0)
             leading_zero = false;
-        
+
         origin.x += (CONST_DIGIT_WIDTH + 1) * m_helper->scale();
         if (segment->get_digit() == 0)
         {
@@ -60,13 +60,18 @@ void segment_display::draw()
 
 void segment_display::set_num(uint16_t num)
 {
+    for (auto& seg : m_segments)
+        seg->set_digit(0); /* reset first */
+
     m_number = num;
     int index = m_segments.size() - 1;
-    do {
+    do
+    {
         const auto digit = num % 10;
         m_segments[index]->set_digit(digit);
         index--;
-    } while ((num /= 10) && index < m_segments.size());
+    }
+    while ((num /= 10) && index < m_segments.size());
 }
 
 segment_display& segment_display::operator++()

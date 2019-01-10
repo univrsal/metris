@@ -21,11 +21,6 @@ void sprite::draw(const SDL_Point* p, atlas* a)
     a->draw(p->x, p->y, &u_v);
 }
 
-void sprite::draw_rot(const SDL_Point* p, int rot, atlas* a)
-{
-    a->draw_rot_nocenter(p->x, p->y, rot, &u_v);
-}
-
 void sprite::draw_absolute(const SDL_Point* p, atlas* a)
 {
     a->draw_absolute(p->x, p->y, &u_v);

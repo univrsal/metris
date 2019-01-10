@@ -17,6 +17,7 @@ private:
     uint8_t m_digit = 0;
 };
 
+/* 7 segment display for numbers */
 class segment_display
 {
 public:

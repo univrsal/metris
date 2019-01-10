@@ -30,7 +30,7 @@ public:
 
     void play(music_type m);
     void play_sfx(sfx_type sfx) const;
-    void pause(music_type m) const;
+    void pause() const;
     void set_vol(float f) const;
     void toggle_music();
     void switch_music(music_type m);
@@ -49,5 +49,4 @@ private:
     HSTREAM m_turn_sample{};
     HSTREAM m_break_sample{};
     HSTREAM m_break4_sample{};
-
 };

@@ -24,7 +24,7 @@ void star::draw(sdl_helper* helper) const
 
     const auto delta_t = SDL_GetTicks() - m_init_tick;
 
-    auto percent = ((static_cast<float>(delta_t % m_anim_time)* 2.f) / m_anim_time);
+    auto percent = ((static_cast<float>(delta_t % m_anim_time) * 2.f) / m_anim_time);
 
     if (percent >= 1.f)
         percent = 2.f - percent;
@@ -33,8 +33,10 @@ void star::draw(sdl_helper* helper) const
 
     if (dim <= 0)
         dim = 1;
-    SDL_Rect temp = {helper->origin()->x + (m_pos.x * helper->scale()) - dim,
-        helper->origin()->y + (m_pos.y * helper->scale()) - dim, dim * 2, dim * 2};
+    SDL_Rect temp = {
+        helper->origin()->x + (m_pos.x * helper->scale()) - dim,
+        helper->origin()->y + (m_pos.y * helper->scale()) - dim, dim * 2, dim * 2
+    };
 
     SDL_RenderFillRect(helper->renderer(), &temp);
 }

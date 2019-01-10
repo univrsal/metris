@@ -1,7 +1,6 @@
 #include "level.hpp"
 #include "game_logic.hpp"
 #include "sdl_helper.hpp"
-#include "bass_handler.hpp"
 
 level::level(game_logic* logic)
 {
@@ -15,7 +14,8 @@ void level::up()
 {
     m_id++;
     m_min_score = 1000 * m_id;
-    m_tile_drop_speed -= 100;
+    if (m_tile_drop_speed > 100)
+        m_tile_drop_speed -= 100;
 }
 
 uint8_t level::id() const
@@ -26,6 +26,14 @@ uint8_t level::id() const
 uint16_t level::get_lines() const
 {
     return m_lines;
+}
+
+void level::reset()
+{
+    m_score = 0;
+    m_lines = 0;
+    m_id = 0;
+    m_tile_drop_speed = 1000;
 }
 
 uint16_t level::score_for_line_clear(uint8_t lines) const
@@ -76,13 +84,13 @@ uint8_t level::check_line_clears()
 void level::draw_line_clear()
 {
     auto* bright = m_logic->helper()->color_bright();
-    
+
     for (auto i = 0; i < m_cleared_line_count; i++)
     {
         auto line = *m_logic->helper()->field_dim();
         line.h = CONST_BRICK_DIM * m_logic->helper()->scale();
         line.y += m_cleared_lines[i] * CONST_BRICK_DIM * m_logic->helper()->scale();
-        
+
         SDL_SetRenderDrawColor(m_logic->helper()->renderer(), bright->r, bright->g, bright->b, bright->a);
         SDL_RenderFillRect(m_logic->helper()->renderer(), &line);
     }

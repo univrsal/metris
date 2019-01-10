@@ -42,7 +42,10 @@ enum sprite_id
     ID_SIDE_RIGHT,
     ID_SIDE_LEFT,
     ID_FILL,
-    ID_SPRITE_COUNT
+    ID_GAME_OVER,
+    ID_TRY_AGAIN,
+    /*---*/
+    ID_SPRITE_COUNT,
 };
 
 class atlas;
@@ -55,6 +58,5 @@ public:
     SDL_Rect u_v{};
     void draw(uint16_t x, uint16_t y, atlas* a);
     void draw(const SDL_Point* p, atlas* a);
-    void draw_rot(const SDL_Point* p, int rot, atlas* a);
     void draw_absolute(const SDL_Point* p, atlas* a);
 };

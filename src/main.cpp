@@ -4,6 +4,10 @@
 #include "game_logic.hpp"
 #include "util.hpp"
 
+#ifdef _WIN32
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup") /* Disables console window on Windows */
+#endif
+
 int main(int argc, char** argv)
 {
     auto* helper = new sdl_helper();
@@ -22,8 +26,8 @@ int main(int argc, char** argv)
         logic->draw();
     }
 
-    delete helper;
-    delete logic;
 
+    delete logic;
+    delete helper;
     return 0;
 }

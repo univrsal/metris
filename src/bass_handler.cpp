@@ -10,19 +10,19 @@ bass_handler::bass_handler()
 
 bool bass_handler::init()
 {
+    bool success = false;
 #ifndef _WIN32
     int a = 1;
-    bool success = false;
     BASS_DEVICEINFO info; 
 
     while (BASS_GetDeviceInfo(a, &info)) /* find first device, that can be initialized */
     {
        if (info.flags & BASS_DEVICE_ENABLED)
        {
-           printf("Found audio device %i::%s\n", a, info.name);
+           printf("[BASS] Found audio device %i::%s\n", a, info.name);
            if (strstr(info.name, "Pulse") != nullptr)
            {
-               printf("Initializing %i::\"%s\"...\n", a, info.name);
+               printf("[BASS] Initializing %i::\"%s\"...\n", a, info.name);
                success = BASS_Init(a, 44100, 0, nullptr, nullptr);
                break;
            }
@@ -30,10 +30,10 @@ bool bass_handler::init()
        a++;
     }
 #else
-    printf("Initializing default device\n");
+    printf("[BASS] Initializing default audio device\n");
     success = BASS_Init(1, 44100, BASS_DEVICE_STEREO, nullptr, nullptr);
 #endif
-    printf("Device state: %s\n", success ? "Yes" : "No");
+    printf("[BASS] Audio device state: %s\n", success ? "Initialized" : "Initialization failed");
 
     if (success)
     {
@@ -65,6 +65,7 @@ bool bass_handler::init()
 
 void bass_handler::close_bass() const
 {
+    pause();
     BASS_MusicFree(m_high_score);
     BASS_MusicFree(m_menu_theme);
     BASS_MusicFree(m_theme_a);
@@ -81,6 +82,7 @@ void bass_handler::close_bass() const
 void bass_handler::play(const music_type m)
 {
     m_current = m;
+    m_playing = true;
     switch (m)
     {
     case MUSIC_MENU:
@@ -95,7 +97,7 @@ void bass_handler::play(const music_type m)
         if (!BASS_ChannelPlay(m_high_score, TRUE))
             printf("Error playing high score theme! Error Code: %i\n", BASS_ErrorGetCode());
         break;
-    default:;
+    default: ;
     }
 }
 
@@ -130,23 +132,11 @@ void bass_handler::play_sfx(const sfx_type sfx) const
     }
 }
 
-void bass_handler::pause(const music_type m) const
+void bass_handler::pause() const
 {
-    switch (m)
-    {
-    case MUSIC_MENU:
-        if (!BASS_ChannelPause(m_menu_theme))
-            printf("Error pausing menu theme! Error Code: %i\n", BASS_ErrorGetCode());
-        break;
-    case MUSIC_A_THEME:
-        if (!BASS_ChannelPause(m_theme_a))
-            printf("Error pausing theme a! Error Code: %i\n", BASS_ErrorGetCode());
-        break;
-    case MUSIC_HIGH_SCORE:
-        if (!BASS_ChannelPause(m_high_score))
-            printf("Error pausing high score theme! Error Code: %i\n", BASS_ErrorGetCode());
-        break;
-    }
+    BASS_ChannelPause(m_menu_theme);
+    BASS_ChannelPause(m_theme_a);
+    BASS_ChannelPause(m_high_score);
 }
 
 void bass_handler::set_vol(const float f) const
@@ -163,28 +153,26 @@ void bass_handler::toggle_music(void)
     if (m_playing)
         play(m_current);
     else
-        pause(m_current);
+        pause();
 }
 
 void bass_handler::switch_music(const music_type m)
 {
-    if (m_playing)
-        pause(m_current);
+    pause();
 
     m_current = m;
     switch (m_current)
     {
     case MUSIC_MENU:
-        set_vol(.5f);
-        break;
-    case MUSIC_A_THEME:
         set_vol(.3f);
         break;
-    case MUSIC_HIGH_SCORE:
+    case MUSIC_A_THEME:
+        set_vol(.1f);
         break;
-    default:;
+    case MUSIC_HIGH_SCORE:
+        set_vol(.4f);
+        break;
+    default: ;
     }
-
-    if (m_playing)
-        play(m_current);
+    play(m_current);
 }

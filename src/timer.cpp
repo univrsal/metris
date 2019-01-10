@@ -1,6 +1,6 @@
-#include "animation.hpp"
+#include "timer.hpp"
 
-animation::animation()
+timer::timer()
 {
     m_hold = 0;
     m_release = 0;
@@ -8,7 +8,7 @@ animation::animation()
     m_trigger_once = false;
 }
 
-animation::animation(const int hold, const int release, const bool trigger_once)
+timer::timer(const int hold, const int release, const bool trigger_once)
 {
     m_hold = hold;
     m_release = release;
@@ -16,17 +16,17 @@ animation::animation(const int hold, const int release, const bool trigger_once)
     m_trigger_once = trigger_once;
 }
 
-void animation::set_hold(const uint16_t h)
+void timer::set_hold(const uint16_t h)
 {
     m_hold = h;
 }
 
-void animation::set_release(const uint16_t r)
+void timer::set_release(const uint16_t r)
 {
     m_release = r;
 }
 
-bool animation::state()
+bool timer::state()
 {
     if (SDL_GetTicks() - m_init_ticks < m_hold)
     {
@@ -53,7 +53,7 @@ bool animation::state()
     return false;
 }
 
-void animation::reset()
+void timer::reset()
 {
     m_init_ticks = SDL_GetTicks();
 }

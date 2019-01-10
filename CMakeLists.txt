@@ -7,6 +7,7 @@ if(MSVC)
 
     find_path(BASS_INCLUDE_DIRS bass.h)
     find_library(BASS_LIBRARIES bass)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
 else()
     set(CMAKE_C_FLAGS_DEBUG "-D_DEBUG")
     SET(GCC_FLAGS "-fpermissive")
@@ -20,8 +21,8 @@ endif()
 set(metris_SOURCES
     src/sdl_helper.cpp
     src/sdl_helper.hpp
-    src/animation.cpp
-    src/animation.hpp
+    src/timer.cpp
+    src/timer.hpp
     src/atlas.cpp
     src/atlas.hpp
     src/segment_display.cpp

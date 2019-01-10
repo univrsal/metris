@@ -16,6 +16,7 @@ public:
     void clear_lines();
     uint32_t get_score() const;
     uint16_t get_lines() const;
+    void reset();
 
 private:
     uint16_t score_for_line_clear(uint8_t lines) const;

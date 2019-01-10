@@ -6,7 +6,6 @@
 #include "sprite.hpp"
 #include "sdl_helper.hpp"
 #include "segment_display.hpp"
-#include <cstdio>
 
 game_logic::game_logic(sdl_helper* helper)
     : m_game_field{}, m_lock_fast_drop(false)
@@ -14,15 +13,14 @@ game_logic::game_logic(sdl_helper* helper)
     m_bass = new bass_handler();
     m_atlas = new atlas(helper);
     m_current_level = nullptr;
-    m_arrow = animation(1000, 1000, false);
+    m_arrow = timer(1000, 1000, false);
     m_helper = helper;
     m_state = STATE_IN_MENU;
 
-    m_score = new segment_display(this, 6, SDL_Point{ 28, 30 });
-    m_level = new segment_display(this, 6, SDL_Point{ 28, 90 });
-    m_lines = new segment_display(this, 6, SDL_Point{ 28, 150 });
+    m_score = new segment_display(this, 6, SDL_Point{28, 30});
+    m_level = new segment_display(this, 6, SDL_Point{28, 90});
+    m_lines = new segment_display(this, 6, SDL_Point{28, 150});
 
-    m_last_tick = 0;
     m_game_over_y = 0;
 }
 
@@ -42,33 +40,42 @@ bool game_logic::init()
     {
         if (m_atlas->load(CONST_TXT_ATLAS))
         {
-            m_sprites[ID_SQUARE_BRICK] = { CONST_BRICK_DIM * 0, 0, CONST_BRICK_DIM, CONST_BRICK_DIM };
-            m_sprites[ID_I_BRICK_TOP] = { CONST_BRICK_DIM * 1, 0, CONST_BRICK_DIM, CONST_BRICK_DIM };
-            m_sprites[ID_I_BRICK_MID] = { CONST_BRICK_DIM * 2, 0, CONST_BRICK_DIM, CONST_BRICK_DIM };
-            m_sprites[ID_I_BRICK_BTM] = { CONST_BRICK_DIM * 3, 0, CONST_BRICK_DIM, CONST_BRICK_DIM };
-            m_sprites[ID_J_BRICK] = { CONST_BRICK_DIM * 4, 0, CONST_BRICK_DIM, CONST_BRICK_DIM };
-            m_sprites[ID_L_BRICK] = { CONST_BRICK_DIM * 5, 0, CONST_BRICK_DIM, CONST_BRICK_DIM };
-            m_sprites[ID_T_BRICK] = { CONST_BRICK_DIM * 6, 0, CONST_BRICK_DIM, CONST_BRICK_DIM };
-            m_sprites[ID_S_BRICK] = { CONST_BRICK_DIM * 7, 0, CONST_BRICK_DIM, CONST_BRICK_DIM };
-            m_sprites[ID_Z_BRICK] = { CONST_BRICK_DIM * 0, CONST_BRICK_DIM, CONST_BRICK_DIM, CONST_BRICK_DIM };
-            m_sprites[ID_I_BRICK_TOP_90] = { CONST_BRICK_DIM * 1, CONST_BRICK_DIM, CONST_BRICK_DIM, CONST_BRICK_DIM };
-            m_sprites[ID_I_BRICK_MID_90] = { CONST_BRICK_DIM * 2, CONST_BRICK_DIM, CONST_BRICK_DIM, CONST_BRICK_DIM };
-            m_sprites[ID_I_BRICK_BTM_90] = { CONST_BRICK_DIM * 3, CONST_BRICK_DIM, CONST_BRICK_DIM, CONST_BRICK_DIM };
-            m_sprites[ID_WALL] = { 60, 15, CONST_BRICK_DIM, CONST_BRICK_DIM };
-            m_sprites[ID_START] = { 0, 30, 153, 138 };
-            m_sprites[ID_SCORE] = { 154, 16, 38, 10 };
-            m_sprites[ID_LEVEL] = { 154, 28, 38, 10 };
-            m_sprites[ID_LINES] = { 154, 40, 38, 10 };
+            /* Initialize Sprite locations */
+            m_sprites[ID_SQUARE_BRICK] = {CONST_BRICK_DIM * 0, 0, CONST_BRICK_DIM, CONST_BRICK_DIM};
+            m_sprites[ID_I_BRICK_TOP] = {CONST_BRICK_DIM * 1, 0, CONST_BRICK_DIM, CONST_BRICK_DIM};
+            m_sprites[ID_I_BRICK_MID] = {CONST_BRICK_DIM * 2, 0, CONST_BRICK_DIM, CONST_BRICK_DIM};
+            m_sprites[ID_I_BRICK_BTM] = {CONST_BRICK_DIM * 3, 0, CONST_BRICK_DIM, CONST_BRICK_DIM};
+            m_sprites[ID_J_BRICK] = {CONST_BRICK_DIM * 4, 0, CONST_BRICK_DIM, CONST_BRICK_DIM};
+            m_sprites[ID_L_BRICK] = {CONST_BRICK_DIM * 5, 0, CONST_BRICK_DIM, CONST_BRICK_DIM};
+            m_sprites[ID_T_BRICK] = {CONST_BRICK_DIM * 6, 0, CONST_BRICK_DIM, CONST_BRICK_DIM};
+            m_sprites[ID_S_BRICK] = {CONST_BRICK_DIM * 7, 0, CONST_BRICK_DIM, CONST_BRICK_DIM};
+            m_sprites[ID_Z_BRICK] = {CONST_BRICK_DIM * 0, CONST_BRICK_DIM, CONST_BRICK_DIM, CONST_BRICK_DIM};
+            m_sprites[ID_I_BRICK_TOP_90] = {CONST_BRICK_DIM * 1, CONST_BRICK_DIM, CONST_BRICK_DIM, CONST_BRICK_DIM};
+            m_sprites[ID_I_BRICK_MID_90] = {CONST_BRICK_DIM * 2, CONST_BRICK_DIM, CONST_BRICK_DIM, CONST_BRICK_DIM};
+            m_sprites[ID_I_BRICK_BTM_90] = {CONST_BRICK_DIM * 3, CONST_BRICK_DIM, CONST_BRICK_DIM, CONST_BRICK_DIM};
+            m_sprites[ID_WALL] = {60, 15, CONST_BRICK_DIM, CONST_BRICK_DIM};
+            m_sprites[ID_START] = {0, 30, 153, 138};
+            m_sprites[ID_SCORE] = {154, 16, 38, 10};
+            m_sprites[ID_LEVEL] = {154, 28, 38, 10};
+            m_sprites[ID_LINES] = {154, 40, 38, 10};
+            m_sprites[ID_GAME_OVER] = {154, 51, 32, 22};
+            m_sprites[ID_TRY_AGAIN] = {154, 74, 65, 42};
 
             for (uint16_t i = ID_CORNER_TL; i <= ID_FILL; i++)
-                m_sprites[i] = { static_cast<uint16_t>(120 + CONST_BRICK_DIM * (i - ID_CORNER_TL)), 0, CONST_BRICK_DIM, CONST_BRICK_DIM };
+                m_sprites[i] = {
+                    static_cast<uint16_t>(120 + CONST_BRICK_DIM * (i - ID_CORNER_TL)), 0, CONST_BRICK_DIM,
+                    CONST_BRICK_DIM
+                };
 
             for (uint16_t i = ID_NUM_EMPTY; i <= ID_NUM_9; i++)
-                m_sprites[i] = { static_cast<uint16_t>(75 + CONST_SEGMENT_W * (i - ID_NUM_EMPTY)), CONST_BRICK_DIM, CONST_SEGMENT_W, CONST_SEGMENT_H };
+                m_sprites[i] = {
+                    static_cast<uint16_t>(75 + CONST_SEGMENT_W * (i - ID_NUM_EMPTY)), CONST_BRICK_DIM, CONST_SEGMENT_W,
+                    CONST_SEGMENT_H
+                };
 
             m_bass->play(MUSIC_MENU);
             m_current_level = new level(this);
-            m_gravity_timer = animation(m_current_level->drop_speed() / 2, m_current_level->drop_speed() / 2, true);
+            m_gravity_timer = timer(m_current_level->drop_speed() / 2, m_current_level->drop_speed() / 2, true);
 
             m_stars[0] = star(40 + (rand() % 10 - 5), 60 + (rand() % 10 - 5), 1.2, 2500);
             m_stars[1] = star(50 + (rand() % 10 - 5), 80 + (rand() % 10 - 5), 1, 3500);
@@ -92,11 +99,9 @@ bool game_logic::init()
 
 void game_logic::run()
 {
-    if (m_state == STATE_IN_MENU)
-        return;
-
-    if (m_state == STATE_INGAME)
+    switch (m_state)
     {
+    case STATE_INGAME:
         if (m_gravity_timer.state())
         {
             if (!drop_brick())
@@ -107,23 +112,27 @@ void game_logic::run()
             }
         }
 
-        m_last_tick = SDL_GetTicks();
-    }
-    else if (m_state == STATE_LINE_BREAK)
-    {
+        break;
+    case STATE_LINE_BREAK:
         if (SDL_GetTicks() - m_line_clear_start > 1300)
         {
             m_current_level->clear_lines();
             m_score->set_num(m_current_level->get_score());
             m_lines->set_num(m_current_level->get_lines());
             m_level->set_num(m_current_level->id());
-            m_gravity_timer = animation(m_current_level->drop_speed() / 2, m_current_level->drop_speed() / 2, true);
+            m_gravity_timer = timer(m_current_level->drop_speed() / 2, m_current_level->drop_speed() / 2, true);
             m_state = STATE_INGAME;
         }
-    }
-    else if (m_state == STATE_DRAW_GAMEOVER)
-    {    
+        break;
+    case STATE_GAME_ENDING:
         do_game_over();
+        if (SDL_GetTicks() - m_game_over_start > 2700)
+        {
+            m_state = STATE_GAMEOVER;
+            m_bass->switch_music(MUSIC_HIGH_SCORE);
+        }
+        break;
+    default: ;
     }
 }
 
@@ -143,7 +152,7 @@ bool game_logic::in_game() const
 
 bool game_logic::game_over() const
 {
-    return m_state == STATE_GAMEOVER || m_state == STATE_DRAW_GAMEOVER;
+    return m_state == STATE_GAMEOVER || m_state == STATE_GAME_ENDING;
 }
 
 void game_logic::next_brick()
@@ -152,7 +161,7 @@ void game_logic::next_brick()
     m_next_brick.shuffle();
     m_gravity_timer.reset();
 
-    switch (m_current_brick.get_type())
+    switch (m_current_brick.get_type()) /* Position each type of brick correctly, so they're centered */
     {
     case ID_I_BRICK_BTM:
         m_current_brick.set_grid_pos(3, -1, this);
@@ -186,19 +195,19 @@ void game_logic::draw_start()
         m_helper->color_bright()->b, m_helper->color_bright()->a);
     if (m_arrow.state())
     {
-        SDL_Rect temp = { m_helper->origin()->x + 45 * m_helper->scale(),
-            m_helper->origin()->y + 106 * m_helper->scale(), 4 * m_helper->scale(), 6 * m_helper->scale() };
+        SDL_Rect temp = {
+            m_helper->origin()->x + 45 * m_helper->scale(),
+            m_helper->origin()->y + 106 * m_helper->scale(), 4 * m_helper->scale(), 6 * m_helper->scale()
+        };
 
         SDL_RenderFillRect(m_helper->renderer(), &temp);
     }
 
     for (auto s : m_stars)
         s.draw(m_helper);
-
-    m_last_tick = SDL_GetTicks();
 }
 
-void game_logic::draw_walls(void)
+void game_logic::draw_walls()
 {
     SDL_Point temp = {};
 
@@ -244,6 +253,15 @@ void game_logic::draw_sidebar()
     m_lines->draw();
 }
 
+void game_logic::draw_gameover()
+{
+    const auto o = m_helper->origin();
+    m_sprites[ID_GAME_OVER].draw(o->x + 73 * m_helper->scale(),
+        o->y + 60 * m_helper->scale(), m_atlas);
+    m_sprites[ID_TRY_AGAIN].draw(o->x + 55 * m_helper->scale(),
+        o->y + 120 * m_helper->scale(), m_atlas);
+}
+
 void game_logic::draw_rectangle(int x, int y, int w, int h)
 {
     auto p = util_shift(m_helper->field_origin(), x * CONST_BRICK_DIM,
@@ -253,8 +271,10 @@ void game_logic::draw_rectangle(int x, int y, int w, int h)
 
     auto* b = m_helper->color_bright();
     SDL_SetRenderDrawColor(m_helper->renderer(), b->r, b->g, b->b, b->a);
-    SDL_Rect rect = { p.x + CONST_BRICK_DIM * m_helper->scale(), p.y + CONST_BRICK_DIM * m_helper->scale(),
-        w * CONST_BRICK_DIM * m_helper->scale(), h * CONST_BRICK_DIM * m_helper->scale() };
+    SDL_Rect rect = {
+        p.x + CONST_BRICK_DIM * m_helper->scale(), p.y + CONST_BRICK_DIM * m_helper->scale(),
+        w * CONST_BRICK_DIM * m_helper->scale(), h * CONST_BRICK_DIM * m_helper->scale()
+    };
     SDL_RenderFillRect(m_helper->renderer(), &rect);
 
     for (auto x2 = 0; x2 < w; x2++)
@@ -294,19 +314,21 @@ bool game_logic::drop_brick(void)
     {
         for (auto y = 0; y < 4; y++)
         {
-            const auto brick_part = get_shape_for_type(m_current_brick.get_type(), m_current_brick.get_rotation(), x, y);
+            const auto brick_part =
+                get_shape_for_type(m_current_brick.get_type(), m_current_brick.get_rotation(), x, y);
             const auto field_part = m_game_field[grid_x + x][new_y_grid + y];
 
             if (brick_part != ID_EMPTY && field_part != ID_EMPTY || brick_part != ID_EMPTY && new_y_grid + y >=
                 CONST_FIELD_HEIGHT)
             {
                 success = false;
-                goto end; // I was told this is okay, and by that I mean stackoverflow said so
+                m_lock_fast_drop = true; /* Prevent next brick from falling immediately */
+                goto end; // I was told this is okay, and by that I mean stack overflow said so
             }
         }
     }
 
-    end:
+end:
 
     if (success)
     {
@@ -331,7 +353,8 @@ void game_logic::move_brick(const direction d)
                 if (m_current_brick.grid_y() + y < 0)
                     continue; /* This part is outside the field -> no collision */
 
-                const auto brick_part = get_shape_for_type(m_current_brick.get_type(), m_current_brick.get_rotation(), x, y);
+                const auto brick_part = get_shape_for_type(m_current_brick.get_type(), m_current_brick.get_rotation(),
+                    x, y);
                 const auto field_part = m_game_field[new_x_grid + x][grid_y + y];
 
                 // What the fuck
@@ -364,15 +387,11 @@ void game_logic::fast_drop()
 {
     if (SDL_GetTicks() % 100 < 90)
     {
-        if (m_helper->event()->key.keysym.sym == SDLK_s)
+        if (!drop_brick())
         {
-            if (!drop_brick())
-            {
-                place_brick();
-                m_bass->play_sfx(SFX_PLACE);
-                next_brick();
-                m_lock_fast_drop = true;
-            }
+            place_brick();
+            m_bass->play_sfx(SFX_PLACE);
+            next_brick();
         }
     }
 }
@@ -386,7 +405,8 @@ void game_logic::place_brick()
     {
         for (auto y = 0; y < 4; y++)
         {
-            const auto brick_part = get_shape_for_type(m_current_brick.get_type(), m_current_brick.get_rotation(), x, y);
+            const auto brick_part =
+                get_shape_for_type(m_current_brick.get_type(), m_current_brick.get_rotation(), x, y);
             const auto field_part = m_game_field[grid_x + x][grid_y + y];
 
             if (brick_part != ID_EMPTY)
@@ -394,10 +414,11 @@ void game_logic::place_brick()
                 if (field_part != ID_EMPTY)
                 {
                     // There's already something here
-                    m_state = STATE_DRAW_GAMEOVER;
+                    m_state = STATE_GAME_ENDING;
                     m_game_over_y = CONST_FIELD_HEIGHT - 1;
-                    m_bass->pause(MUSIC_A_THEME);
+                    m_bass->pause();
                     m_bass->play_sfx(SFX_GAME_OVER);
+                    m_game_over_start = SDL_GetTicks();
                 }
                 m_game_field[grid_x + x][grid_y + y] = brick_part;
             }
@@ -425,30 +446,33 @@ void game_logic::handle_events()
         {
         case SDL_QUIT:
             m_run_flag = false;
+            m_bass->pause();
             break;
         case SDL_KEYUP:
             if (in_game())
             {
                 if (!game_over() && m_state != STATE_LINE_BREAK)
                 {
-                    switch(m_helper->event()->key.keysym.sym)
+                    switch (m_helper->event()->key.keysym.sym)
                     {
                     case SDLK_e:
+                    case SDLK_w:
+                    case SDLK_UP:
                         current()->rotate(this);
                         m_bass->play_sfx(SFX_TURN);
                         break;
-                    case SDLK_w:
-                        current()->shuffle();
-                        break;
                     case SDLK_a:
+                    case SDLK_LEFT:
                         move_brick(DIR_LEFT);
                         m_bass->play_sfx(SFX_MOVE);
                         break;
                     case SDLK_d:
+                    case SDLK_RIGHT:
                         move_brick(DIR_RIGHT);
                         m_bass->play_sfx(SFX_MOVE);
                         break;
                     case SDLK_s:
+                    case SDLK_DOWN:
                         m_lock_fast_drop = false;
                         break;
                     case SDLK_m:
@@ -457,11 +481,29 @@ void game_logic::handle_events()
                     default: ;
                     }
                 }
+                else if (game_over())
+                {
+                    if (m_helper->event()->key.keysym.sym == SDLK_RETURN)
+                    {
+                        m_state = STATE_IN_MENU;
+                        m_bass->switch_music(MUSIC_MENU);
+                        m_helper->set_display(153, 138);
+
+                        for (auto& line : m_game_field)
+                            for (auto& block : line)
+                                block = ID_EMPTY;
+                        m_current_level->reset();
+                    }
+                }
             }
             else if (m_helper->event()->key.keysym.sym == SDLK_RETURN)
             {
+                m_score->set_num(0);
+                m_level->set_num(0);
+                m_lines->set_num(0);
                 m_bass->switch_music(MUSIC_A_THEME);
                 m_helper->set_display(CONST_DEFAULT_SIDE_BAR_WIDTH + CONST_FIELD_W, CONST_FIELD_H);
+
                 start();
             }
             break;
@@ -474,7 +516,7 @@ void game_logic::handle_events()
                 }
             }
             break;
-        default:;
+        default: ;
         }
     }
 }
@@ -489,38 +531,47 @@ void game_logic::draw()
         SDL_RenderFillRect(m_helper->renderer(), m_helper->field_dim());
         draw_walls();
         draw_sidebar();
-        /*SDL_SetRenderDrawColor(m_helper->renderer(), 255, 0, 0, 255);
-        SDL_RenderDrawRect(m_helper->renderer(), m_helper->game_dim());
-        SDL_SetRenderDrawColor(m_helper->renderer(), 0, 255, 0, 255);
-        SDL_RenderDrawRect(m_helper->renderer(), m_helper->field_dim());*/
-            
-        const auto origin = m_helper->field_origin();
 
-        for (auto x = 0; x < CONST_FIELD_WIDTH; x++)
+        if (m_state == STATE_GAMEOVER)
         {
-            for (auto y = 0; y < CONST_FIELD_HEIGHT; y++)
+            draw_gameover();
+        }
+        else
+        {
+            const auto origin = m_helper->field_origin();
+
+            for (auto x = 0; x < CONST_FIELD_WIDTH; x++)
             {
-                SDL_Point p = { 0, 0 };
-                switch (m_game_field[x][y])
+                for (auto y = 0; y < CONST_FIELD_HEIGHT; y++)
                 {
-                case ID_I_BRICK_BTM:
-                case ID_I_BRICK_BTM_90:
-                case ID_I_BRICK_MID:
-                case ID_I_BRICK_MID_90:
-                case ID_I_BRICK_TOP:
-                case ID_I_BRICK_TOP_90:
-                case ID_L_BRICK:
-                case ID_J_BRICK:
-                case ID_Z_BRICK:
-                case ID_S_BRICK:
-                case ID_SQUARE_BRICK:
-                case ID_T_BRICK:
-                    p = util_shift(origin, x * CONST_BRICK_DIM,
-                        y * CONST_BRICK_DIM, m_helper->scale());
-                    m_sprites[m_game_field[x][y]].draw_absolute(&p, m_atlas);
-                default:
-                    break;
+                    SDL_Point p = {0, 0};
+                    switch (m_game_field[x][y])
+                    {
+                    case ID_I_BRICK_BTM:
+                    case ID_I_BRICK_BTM_90:
+                    case ID_I_BRICK_MID:
+                    case ID_I_BRICK_MID_90:
+                    case ID_I_BRICK_TOP:
+                    case ID_I_BRICK_TOP_90:
+                    case ID_L_BRICK:
+                    case ID_J_BRICK:
+                    case ID_Z_BRICK:
+                    case ID_S_BRICK:
+                    case ID_SQUARE_BRICK:
+                    case ID_T_BRICK:
+                        p = util_shift(origin, x * CONST_BRICK_DIM,
+                            y * CONST_BRICK_DIM, m_helper->scale());
+                        m_sprites[m_game_field[x][y]].draw_absolute(&p, m_atlas);
+                    default:
+                        break;
+                    }
                 }
+            }
+
+            if (m_state != STATE_GAME_ENDING)
+            {
+                current()->draw(m_helper, this);
+                next()->draw(m_helper, this);
             }
         }
 
@@ -530,11 +581,6 @@ void game_logic::draw()
             {
                 m_current_level->draw_line_clear();
             }
-            next()->draw(m_helper, this);
-        }
-        else if (!game_over())
-        {
-            current()->draw(m_helper, this);
             next()->draw(m_helper, this);
         }
     }
@@ -547,21 +593,14 @@ void game_logic::draw()
 
 void game_logic::do_game_over()
 {
-    if (SDL_GetTicks() % 100 < 80)
+    if (m_game_over_y >= 0)
     {
-        for (auto& x : m_game_field)
-            x[m_game_over_y] = m_state == m_game_over_state ? ID_EMPTY : ID_S_BRICK;
-
-        m_game_over_y--;
-
-        if (m_game_over_y < 0 && !m_game_over_state)
+        if (SDL_GetTicks() % 100 < 80)
         {
-            m_game_over_state = true;
-            m_game_over_y = CONST_FIELD_HEIGHT - 1;
-        }
-        else if (m_game_over_y < 0 && m_game_over_state)
-        {
-            m_state = STATE_GAMEOVER;
+            for (auto& x : m_game_field)
+                x[m_game_over_y] = ID_S_BRICK;
+
+            m_game_over_y--;
         }
     }
 }
@@ -606,7 +645,7 @@ sprite* game_logic::get_sprite(const sprite_id id)
     return &m_sprites[id];
 }
 
-atlas * game_logic::get_atlas() const
+atlas* game_logic::get_atlas() const
 {
     return m_atlas;
 }

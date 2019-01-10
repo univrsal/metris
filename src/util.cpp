@@ -67,8 +67,8 @@ sprite_id const_t_brick_180[4][4] = {
     {ID_EMPTY, ID_EMPTY, ID_EMPTY, ID_EMPTY}
 };
 sprite_id const_s_brick_0[4][4] = {
-    {ID_EMPTY, ID_EMPTY, ID_EMPTY, ID_EMPTY}, 
-    {ID_EMPTY,   ID_S_BRICK, ID_S_BRICK, ID_EMPTY},
+    {ID_EMPTY, ID_EMPTY, ID_EMPTY, ID_EMPTY},
+    {ID_EMPTY, ID_S_BRICK, ID_S_BRICK, ID_EMPTY},
     {ID_S_BRICK, ID_S_BRICK, ID_EMPTY, ID_EMPTY},
     {ID_EMPTY, ID_EMPTY, ID_EMPTY, ID_EMPTY}
 };
@@ -180,15 +180,14 @@ sprite_id get_shape_for_type(sprite_id type, rotation rotation, int x, int y)
             return const_j_brick_90[x][y];
         case 270:
             return const_j_brick_270[x][y];
-            break;
         }
         break;
+    default:
+        return ID_EMPTY;
     }
-    return ID_EMPTY;
 }
 
 SDL_Point util_shift(const SDL_Point p, const int16_t x, const int16_t y, const int scale)
 {
-    return SDL_Point {p.x + x * scale, p.y + y * scale };
+    return SDL_Point{p.x + x * scale, p.y + y * scale};
 }
-

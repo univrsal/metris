@@ -1,6 +1,6 @@
 #pragma once
 #include "brick.hpp"
-#include "animation.hpp"
+#include "timer.hpp"
 #include "util.hpp"
 #include "sprite.hpp"
 #include "star.hpp"
@@ -17,7 +17,7 @@ enum game_state
     STATE_IN_MENU,
     STATE_INGAME,
     STATE_GAMEOVER,
-    STATE_DRAW_GAMEOVER,
+    STATE_GAME_ENDING,
     STATE_LINE_BREAK
 };
 
@@ -51,14 +51,15 @@ private:
     void draw_start();
     void draw_walls();
     void draw_sidebar();
-    void draw_rectangle(int x, int y, int w, int h); /* Draws a bordered rectangle */
+    void draw_gameover();
+    void draw_rectangle(int x, int y, int w, int h); /* Draws a bordered rectangle (Used in sidebar) */
     bool drop_brick();
-    void do_game_over();
+    void do_game_over(); /* Fills the game field */
     bool in_game() const;
     bool game_over() const;
     void next_brick();
     void move_brick(direction d);
-    void fast_drop();
+    void fast_drop(); /* Drop brick faster, if player presses down 's' or 'arrow down' */
     void place_brick();
 
     sprite_id m_game_field[CONST_FIELD_WIDTH][CONST_FIELD_HEIGHT];
@@ -66,26 +67,25 @@ private:
 
     brick m_current_brick;
     brick m_next_brick;
-    animation m_gravity_timer;
-    animation m_arrow;
+    timer m_gravity_timer;
+    timer m_arrow;
     game_state m_state;
-    
+
     level* m_current_level;
     bass_handler* m_bass;
     sdl_helper* m_helper;
     atlas* m_atlas;
+
     segment_display* m_score;
     segment_display* m_level;
     segment_display* m_lines;
 
     int m_game_over_y;
-    
-    long m_last_tick;
-    long m_line_clear_start{};
-    bool m_run_flag = true;
-    bool m_game_over_state = false;
-    bool m_lock_fast_drop;
 
+    long m_line_clear_start{};
+    long m_game_over_start{}; /* used to check when to start game over music */
+    bool m_run_flag = true;
+    bool m_lock_fast_drop;
 
     star m_stars[12];
 };

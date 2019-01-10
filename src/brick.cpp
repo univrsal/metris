@@ -21,7 +21,7 @@ brick::brick(sprite_id type, uint16_t x, uint16_t y)
 void brick::draw(sdl_helper* helper, game_logic* logic) const
 {
     const auto p = helper->field_origin();
-    SDL_Rect r = { p.x, p.y, CONST_BRICK_DIM * helper->scale(), CONST_BRICK_DIM * helper->scale() };
+    SDL_Rect r = {p.x, p.y, CONST_BRICK_DIM * helper->scale(), CONST_BRICK_DIM * helper->scale()};
 
     for (auto x = 0; x < 4; x++)
     {
@@ -30,8 +30,6 @@ void brick::draw(sdl_helper* helper, game_logic* logic) const
             const auto current = get_shape_for_type(m_type, m_rotation, x, y);
             r.x = p.x + (x + m_grid_x) * CONST_BRICK_DIM * helper->scale();
             r.y = p.y + (y + m_grid_y) * CONST_BRICK_DIM * helper->scale();
-
-            /*SDL_RenderDrawRect(helper->renderer(), &r); */
 
             if (current != ID_EMPTY && y + m_grid_y >= 0)
             {
