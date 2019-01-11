@@ -1,3 +1,8 @@
+/* This file is part of Metris
+ * licensed under the GPL 2.0
+ * github.com/univrsal/metris
+ */
+
 #include <SDL.h>
 #include "level.hpp"
 #include "atlas.hpp"
@@ -488,22 +493,21 @@ void game_logic::handle_events()
                         m_state = STATE_IN_MENU;
                         m_bass->switch_music(MUSIC_MENU);
                         m_helper->set_display(153, 138);
-
-                        for (auto& line : m_game_field)
-                            for (auto& block : line)
-                                block = ID_EMPTY;
-                        m_current_level->reset();
                     }
                 }
             }
             else if (m_helper->event()->key.keysym.sym == SDLK_RETURN)
             {
+                for (auto& line : m_game_field)
+                    for (auto& block : line)
+                        block = ID_EMPTY;
+                m_current_level->reset();
+                m_gravity_timer = timer(m_current_level->drop_speed() / 2, m_current_level->drop_speed() / 2, true);
                 m_score->set_num(0);
                 m_level->set_num(0);
                 m_lines->set_num(0);
                 m_bass->switch_music(MUSIC_A_THEME);
                 m_helper->set_display(CONST_DEFAULT_SIDE_BAR_WIDTH + CONST_FIELD_W, CONST_FIELD_H);
-
                 start();
             }
             break;

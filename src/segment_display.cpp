@@ -1,3 +1,8 @@
+/* This file is part of Metris
+ * licensed under the GPL 2.0
+ * github.com/univrsal/metris
+ */
+
 #include "sdl_helper.hpp"
 #include "segment_display.hpp"
 #include "game_logic.hpp"

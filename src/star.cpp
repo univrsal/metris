@@ -1,3 +1,8 @@
+/* This file is part of Metris
+ * licensed under the GPL 2.0
+ * github.com/univrsal/metris
+ */
+
 #include "star.hpp"
 #include "sdl_helper.hpp"
 #include <cstdio>

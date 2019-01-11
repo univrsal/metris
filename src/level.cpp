@@ -1,3 +1,8 @@
+/* This file is part of Metris
+ * licensed under the GPL 2.0
+ * github.com/univrsal/metris
+ */
+
 #include "level.hpp"
 #include "game_logic.hpp"
 #include "sdl_helper.hpp"
@@ -32,8 +37,10 @@ void level::reset()
 {
     m_score = 0;
     m_lines = 0;
+    m_min_score = 0;
     m_id = 0;
     m_tile_drop_speed = 1000;
+    m_cleared_line_count = 0;
 }
 
 uint16_t level::score_for_line_clear(uint8_t lines) const
